@@ -27,7 +27,15 @@ const char text[NText] = "Hello world!";
 
 void init_comms(void){
 	TRISC6 = 1;		// TX
-	SPBRG = 129;	// 20MHz,9600,16F722	
+/*
+9600 = 8M/[16*(SPBRG+1)] =>   SPBRG = 8M/[16*9600] - 1 = 51
+BuadRate = 8M/[16*(51+1)] = 9615
+*/	
+	SPBRG = 52;	// 8MHz,9600,16F722	
+/*
+SYNC=0,BRG=1 , BuadRate = Fsoc/[16*(SPBRG+1)] , 20M/[16*(129+1)] = 9615,  (9615-9600)/9600 = 0.16%
+*/	
+//	SPBRG = 129;	// 20MHz,9600,16F722	20M/16*(129+1) = 
 //	RCSTA = 0x90;
 //	TXSTA = 0x24;
 
