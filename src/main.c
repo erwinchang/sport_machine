@@ -2,7 +2,7 @@
 #include "c_16f722.h"
 
 #pragma config = ( HS_ & WDTDIS_ & PWRTEN_ & MCLREN_ & UNPROTECT_ & BOREN_ & BORV25_ & PLLDIS_ & DEBUGDIS_ )
-
+#pragma bit MAX7219_CS_PIN	@ PORTC.2
 /*
 RC2      : max7219 load (active low),cs
 RC3 SCK  : max7219 sck
@@ -23,7 +23,9 @@ RC7 RX   : debug tty
 #define NText 	12
 const char text[NText] = "Hello world!";
 
+
 #include "sci-lib.c"
+#include "max7219-1chip.c"
 
 void init_comms(void){
 	TRISC6 = 1;		// TX
@@ -77,7 +79,7 @@ void init_spi(void){
 
 	/* low active, CS */
 	/* RC2: CS = 1 */
-	PORTC 	= 0b.0000.0000;
+	PORTC 	= 0b.0000.0100;
 	TRISC 	= 0b.1101.0001; /* RC2: output */
 }
 
@@ -98,5 +100,6 @@ void main( void)
 	for(i=0; i<NText; i++) putch(text[i]);  crlf();
 	for(i=0; i<NText; i++) putch(text[i]);  crlf();
 	crlf();	
+	max7129_init();
 	while(1);
 }
