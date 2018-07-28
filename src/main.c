@@ -16,6 +16,7 @@ RC7 RX   : debug tty
 #pragma bit CS		@ PORTC.2
 #pragma bit SCK		@ PORTC.3
 #pragma bit SDO		@ PORTC.5
+#pragma bit TP		@ PORTC.1
 
 #pragma wideConstData p	
 
@@ -23,7 +24,12 @@ RC7 RX   : debug tty
 #define NText 	12
 const char text[NText] = "Hello world!";
 
+//	OPTION	= 0x81, 	1:8, 10M/4/4=625K => 1.6us
+//	delay_us(256-200); measurement: 404us -> 2.02us	 
+#define	DELAY_100U		(unsigned char)(256 -(100.0/2.02) +2) 	//102us
+
 #include "out.h"
+#include "common.c"
 #include "sci-lib.c"
 #include "max7219-1chip.c"
 
@@ -101,5 +107,36 @@ void main( void)
 	for(i=0; i<NText; i++) putch(text[i]);  crlf();
 	crlf();	
 	max7129_init();
-	while(1);
+
+	//OPTION  = 0x81 ;  1:4 prescaler ,20M/4/4=1.25M = 0.8u
+    //          0x82 ;  1:8                            1.6u
+    //          0x83 ;  1:16            20M/4/16 = 312.5K = 3.2us
+    //          0x84 ;  1:32            20M/4/32 = 156.25K  = 6.4us   
+    //          0x85 ;  1:64            20M/4/64 =  78.125K = 12.8us
+    //          0x86 ;  1:128          20M/4/128 =   39.0625K = 25.6us
+	/*
+	OPTION	= 0x83, 	1:16, 10M/4/16=156.25K => 6.4us
+	delay_us(256-200); measurement: 1600us -> 8us
+
+	OPTION	= 0x82, 	1:8, 10M/4/8=312.5K => 3.2us
+	delay_us(256-200); measurement: 800us -> 4us
+
+	OPTION	= 0x81, 	1:8, 10M/4/4=625K => 1.6us
+	delay_us(256-200); measurement: 404us -> 2.02us	
+
+	test code
+		TP = 0;
+		delay_us(256-200);
+		TP = 1;
+		delay_us(256-200);	
+	*/
+	OPTION	= 0x81;
+
+	TP = 1;
+	while(1){
+		TP = 0;
+		delay1s();
+		TP = 1;
+		delay1s();
+	}
 }

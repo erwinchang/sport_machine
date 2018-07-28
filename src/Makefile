@@ -18,4 +18,4 @@ clean:
 	@echo "delete file"
 	rm -f $(HEX)
 	rm -f *.cpr *.fcs *.lst *.occ *.var *.asm
-	rm -f table-create
+	rm -f table-create out.h
