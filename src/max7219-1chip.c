@@ -41,7 +41,7 @@ void max7219test(void){
 	}
 }
 
-void max7129_init(void){
+void init_max7129(void){
 	setCmdChip(max7219_reg_scanLimit, 0x07);
 	//setCmdChip1(max7219_reg_decodeMode, 0xff);  // Code B decode for digits 7–0	
 	setCmdChip(max7219_reg_decodeMode, 0x00);  // using an led matrix (not digits)

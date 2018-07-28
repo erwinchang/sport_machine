@@ -24,14 +24,21 @@ RC7 RX   : debug tty
 #define NText 	12
 const char text[NText] = "Hello world!";
 
-//	OPTION	= 0x81, 	1:8, 10M/4/4=625K => 1.6us
-//	delay_us(256-200); measurement: 404us -> 2.02us	 
-#define	DELAY_100U		(unsigned char)(256 -(100.0/2.02) +2) 	//102us
+//	OPTION	= 0x82, 	1:8, 10M/4/8=312.5K => 3.2us
+//	delay_us(256-200); measurement: 800us -> 4us
+#define	DELAY_100U		(unsigned char)(256 -(100.0/4.0) +2) 	//98us
+
+/* key value */
+uns8 previousTMR0;
+uns8 subClock;
+uns8 timer1, timer2L, timer2H;
+bit timeout1, timeout2;
 
 #include "out.h"
 #include "common.c"
 #include "sci-lib.c"
 #include "max7219-1chip.c"
+#include "fsm.c"
 
 void init_comms(void){
 	TRISC6 = 1;		// TX
@@ -106,7 +113,9 @@ void main( void)
 	for(i=0; i<NText; i++) putch(text[i]);  crlf();
 	for(i=0; i<NText; i++) putch(text[i]);  crlf();
 	crlf();	
-	max7129_init();
+	init_max7129();
+	init_fsm();
+	init_app();
 
 	//OPTION  = 0x81 ;  1:4 prescaler ,20M/4/4=1.25M = 0.8u
     //          0x82 ;  1:8                            1.6u
@@ -121,7 +130,7 @@ void main( void)
 	OPTION	= 0x82, 	1:8, 10M/4/8=312.5K => 3.2us
 	delay_us(256-200); measurement: 800us -> 4us
 
-	OPTION	= 0x81, 	1:8, 10M/4/4=625K => 1.6us
+	OPTION	= 0x81, 	1:4, 10M/4/4=625K => 1.6us
 	delay_us(256-200); measurement: 404us -> 2.02us	
 
 	test code
@@ -130,13 +139,19 @@ void main( void)
 		TP = 1;
 		delay_us(256-200);	
 	*/
-	OPTION	= 0x81;
+	OPTION	= 0x82;
 
 	TP = 1;
 	while(1){
-		TP = 0;
-		delay1s();
-		TP = 1;
-		delay1s();
+		timerTick();
+        /* Not more than 1 (2) millisec.
+           between each call to timerTick() */
+
+        /* .. sample analog channels */
+        /* .. do other IO communication */
+        /* .. do global processing and testing */
+		//fsm1();
+		//fsm2();
+		app_main();
 	}
 }
