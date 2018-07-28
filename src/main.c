@@ -23,7 +23,7 @@ RC7 RX   : debug tty
 #define NText 	12
 const char text[NText] = "Hello world!";
 
-
+#include "out.h"
 #include "sci-lib.c"
 #include "max7219-1chip.c"
 
