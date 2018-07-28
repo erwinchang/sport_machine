@@ -46,11 +46,17 @@ void timerTick()
 #define Delay_1000MS  (1000)
 void init_app(){
 	startTimer2(Delay_1000MS);
+	cntNum = 0;
 }
 
 void app_main(){
 	if(timeout2){
-		TP = !TP ;
 		startTimer2(Delay_1000MS);
-	}	
+
+		cntNum = cntNum + 1;
+		if(cntNum > 99 ) cntNum = 0;
+
+		set10base(cntNum);
+		DisplayNumber(v10base[1],v10base[0]);
+	}
 }

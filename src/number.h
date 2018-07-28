@@ -13,6 +13,18 @@ uns8 smiley[8] = // fill array for the smiley
 0B00111110
 };
 
+uns8 numtest[8] = // fill array for the smiley
+{
+0B00001111,
+0B00001000,
+0B00001000,
+0B00001111,
+0B00000001,
+0B00000001,
+0B00001111,
+0B00000000
+};
+
 uns8 num0[8] = // fill array for the smiley
 {
 0B00001111,

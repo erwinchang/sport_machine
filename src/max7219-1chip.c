@@ -1,7 +1,4 @@
 
-#define test_number num0
-
-
 #define send_spi(C)\
 	SSPBUF = C;\
 	SSPIF = 0 ;\
@@ -32,13 +29,36 @@ void setCmdChip(uns8 cmd,uns8 value){
 	MAX7219_CS_PIN = 0;
 	MAX7219_CS_PIN = 1;	/* max7219 , load rising active*/
 }
-void max7219test(void){
+void max7219test(){
 	uns8	i,j,k;
 	for(i=0; i<8; i++){
 		j=i+1;
-		k=test_number[i];
+		k=numtest[i];
 		setCmdChip(j,k);
 	}
+}
+
+
+void DisplayNumber(uns8 v10,uns8 v1){
+	uns8 v,i,j,n;
+	uns8 clear10,clear1;
+
+	if(v10 > 9 ) v10 = 9;
+	j = 4*v10;
+	for(i=1;i<5;i++){
+		v = numTable[j];
+		j = j+1;
+		setCmdChip(i,v);
+	}
+
+	if(v1 > 9 ) v1 = 9;
+	j = 4*v1;
+	for(i=5;i<9;i++){
+		v = numTable[j];
+		j = j+1;
+		setCmdChip(i,v);
+	}
+
 }
 
 void init_max7129(void){
@@ -49,5 +69,6 @@ void init_max7129(void){
 	setCmdChip(max7219_reg_shutdown, 0x01);    // not in shutdown mode
 	setCmdChip(max7219_reg_displayTest, 0x00); // no display test
 
-	max7219test();
+	//max7219test();
+	DisplayNumber(0,0);
 }

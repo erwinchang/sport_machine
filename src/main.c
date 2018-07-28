@@ -34,6 +34,8 @@ uns8 subClock;
 uns8 timer1, timer2L, timer2H;
 bit timeout1, timeout2;
 
+uns8 cntNum;
+
 #include "out.h"
 #include "common.c"
 #include "sci-lib.c"

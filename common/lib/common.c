@@ -19,3 +19,21 @@ void delay1s(void){
 		}
 	}
 }
+
+uns8 v10base[3];
+void set10base(uns8 v)
+{
+	v10base[0]=0;
+	v10base[1]=0;
+	v10base[2]=0;
+
+	while(v >= 100){
+		v -= 100;
+		v10base[2]++;
+	}
+	while(v >= 10){
+		v -= 10;
+		v10base[1]++;
+	}
+	v10base[0]=v;
+}

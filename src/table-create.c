@@ -183,13 +183,14 @@ void num_converter(uns8 *in,uns8 *out){
 }
 
 unsigned char num_string[256];
-uns8 get_num_sting(uns8 *v,uns8 *st){
+uns8 get_num_string(uns8 *v,uns8 x_start,uns8 *st){
 	uns8 i=0,bit,x,y;
 	uns8  n=0;
 	
 	st[0] = 0;
 	n=0;
-	for(x=0;x<8;x++){
+	x=x_start;
+	for(;x<8;x++){
 		st[n++] = '0';
 		st[n++] = 'B';
 		for(y=0;y<8;y++){
@@ -210,6 +211,7 @@ uns8 get_num_sting(uns8 *v,uns8 *st){
 
 unsigned char display_string[256];
 uns8 get_display_string(uns8 *val,uns8 *head,uns8 *st){
+	uns8 tmp[256];
 	uns8 n=0;
 	uns8 len,i;
 
@@ -221,14 +223,62 @@ uns8 get_display_string(uns8 *val,uns8 *head,uns8 *st){
 	st[n++] = '{';
 	st[n++] = '\n';
 
-	len = get_num_sting(val,num_string);
+	len = get_num_string(val,0,tmp);
 	for(i=0;i<len;i++)
-		st[n++] = num_string[i];
+		st[n++] = tmp[i];
 
 	st[n++] = '\n';
 	st[n++] = '}';
 	st[n++] = ';';
 	st[n] = 0;
+
+	return n;
+}
+
+uns8 fwrite_display_num_table_string(FILE *fp,uns8 num[10][8],uns8 *head){
+	uns8 tmp[256];
+	int n=0;
+	uns8 len,i,j;
+	uns8 *st;
+	st = display_string;
+
+	st[0] = 0;
+	len = strlen(head);
+	for(i=0;i<len;i++)
+		st[n++] = head[i];
+	st[n++] = '\n';
+	st[n++] = '{';
+	st[n++] = '\n';
+	st[n] = 0;
+	fprintf(fp,"%s",st);
+
+	for(i=0;i<10;i++){
+		n = 0;
+		len = get_num_string(num[i],4,tmp);
+		st[n++] = '\n';
+		st[n++] = '/';
+		st[n++] = '*';
+		st[n++] = 0x30 + i;
+		st[n++] = '*';
+		st[n++] = '/';
+		st[n++] = '\n';
+		for(j=0;j<len;j++)
+			st[n++] = tmp[j];
+
+		if( i!= 9)
+			st[n++] = ',';
+
+		st[n++] = '\n';
+		st[n]=0;
+		fprintf(fp,"%s",st);
+	}
+
+	n = 0;
+	st[n++] = '\n';
+	st[n++] = '}';
+	st[n++] = ';';
+	st[n] = 0;
+	fprintf(fp,"%s",st);
 
 	return n;
 }
@@ -247,8 +297,14 @@ void writeFileNumber(FILE *fp,uns8 *val,uns8 *head){
 	fprintf(fp, "\n");
 }
 
-
 uns8 num_table[10][8];
+void writeFileNumTable(FILE *fp){
+	uns8 len;
+	fprintf(fp, "\n");
+	fwrite_display_num_table_string(fp,num_table,"const uns8 numTable[10*4] =");
+	fprintf(fp, "\n");
+}
+
 void create_numtable(uns8 num[10][8]){
 	uns8 vout[8];
 	int i,j;
@@ -276,6 +332,7 @@ void createfile(char *file){
 	create_numtable(num_table);
 
     fp = fopen(file,"w+");
+    fprintf(fp, "/*----------------\n");
     writeFileNumber(fp,num_table[0],"const uns8 num0[8] =");
     writeFileNumber(fp,num_table[1],"const uns8 num01[8] =");
     writeFileNumber(fp,num_table[2],"const uns8 num02[8] =");
@@ -286,6 +343,12 @@ void createfile(char *file){
     writeFileNumber(fp,num_table[7],"const uns8 num07[8] =");
     writeFileNumber(fp,num_table[8],"const uns8 num08[8] =");
     writeFileNumber(fp,num_table[9],"const uns8 num09[8] =");
+    fprintf(fp, "--------------*/\n");
+
+	num_converter(numtest,vout);
+    writeFileNumber(fp,vout,"const uns8 numtest[8] =");
+
+    writeFileNumTable(fp);
 	fclose(fp);
 }
 
