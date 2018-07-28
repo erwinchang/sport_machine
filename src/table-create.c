@@ -247,42 +247,45 @@ void writeFileNumber(FILE *fp,uns8 *val,uns8 *head){
 	fprintf(fp, "\n");
 }
 
+
+uns8 num_table[10][8];
+void create_numtable(uns8 num[10][8]){
+	uns8 vout[8];
+	int i,j;
+	for(i=0;i<10;i++)
+		for(j=0;j<8;j++)
+			num_table[i][j] = 0;
+
+    num_converter(num0,num[0]);
+    num_converter(num01,num[1]);
+    num_converter(num02,num[2]);
+    num_converter(num03,num[3]);
+    num_converter(num04,num[4]);
+    num_converter(num05,num[5]);
+    num_converter(num06,num[6]);
+    num_converter(num07,num[7]);
+    num_converter(num08,num[8]);                                
+    num_converter(num09,num[9]);    
+}
+
 void createfile(char *file){
 	uns8 vout[8];
 	FILE *fp;
 	printf("writefile: %s\n",file);
 
+	create_numtable(num_table);
+
     fp = fopen(file,"w+");
-
-    num_converter(num0,vout);
-    writeFileNumber(fp,vout,"const uns8 num0[8] ="); 
-
-    num_converter(num01,vout);
-    writeFileNumber(fp,vout,"const uns8 num01[8] =");       
-
-    num_converter(num02,vout);
-    writeFileNumber(fp,vout,"const uns8 num02[8] =");   
-
-    num_converter(num03,vout);
-    writeFileNumber(fp,vout,"const uns8 num03[8] =");   
-
-    num_converter(num04,vout);
-    writeFileNumber(fp,vout,"const uns8 num04[8] =");          
-
-    num_converter(num05,vout);
-    writeFileNumber(fp,vout,"const uns8 num05[8] =");       
-
-    num_converter(num06,vout);
-    writeFileNumber(fp,vout,"const uns8 num06[8] =");       
-
-    num_converter(num07,vout);
-    writeFileNumber(fp,vout,"const uns8 num07[8] =");       
-
-    num_converter(num08,vout);
-    writeFileNumber(fp,vout,"const uns8 num08[8] =");                            
-
-    num_converter(num09,vout);
-    writeFileNumber(fp,vout,"const uns8 num09[8] =");           
+    writeFileNumber(fp,num_table[0],"const uns8 num0[8] =");
+    writeFileNumber(fp,num_table[1],"const uns8 num01[8] =");
+    writeFileNumber(fp,num_table[2],"const uns8 num02[8] =");
+    writeFileNumber(fp,num_table[3],"const uns8 num03[8] =");
+    writeFileNumber(fp,num_table[4],"const uns8 num04[8] =");
+    writeFileNumber(fp,num_table[5],"const uns8 num05[8] =");
+    writeFileNumber(fp,num_table[6],"const uns8 num06[8] =");
+    writeFileNumber(fp,num_table[7],"const uns8 num07[8] =");
+    writeFileNumber(fp,num_table[8],"const uns8 num08[8] =");
+    writeFileNumber(fp,num_table[9],"const uns8 num09[8] =");
 	fclose(fp);
 }
 
