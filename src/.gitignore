@@ -5,3 +5,5 @@
 *.occ
 *.var
 *.asm
+out.h
+table-create
