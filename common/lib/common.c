@@ -20,6 +20,18 @@ void delay1s(void){
 	}
 }
 
+void delayms(uns16 cnt_ms){
+	uns8 i;
+	uns16 j;
+
+	for(j=0; j<cnt_ms; j++){
+		//1ms
+		for(i=0; i<10; i++){
+			delay_us(DELAY_100U);	//0.1ms
+		}
+	}
+}
+
 uns8 v10base[3];
 void set10base(uns8 v)
 {

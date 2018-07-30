@@ -7,7 +7,7 @@ HEX	:= out.hex
 
 all: table-create $(HEX)
 
-$(HEX): $(SRC) max7219-1chip.c out.h
+$(HEX): $(SRC) max7219-1chip.c out.h fsm.c
 	wine $(CC) -o$(HEX) $(CCFLAGS) $(SRC)
 
 table-create: table-create.c number.h

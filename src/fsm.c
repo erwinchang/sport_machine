@@ -1,4 +1,8 @@
 
+#define startTimer1(c)		\
+	timer1 		= c;		\
+	timeout1	= 0;
+
 #define startTimer2(c)		\
 	timer2L		= (c)%256;	\
 	timer2H		= (c)/256;	\
@@ -43,20 +47,33 @@ void timerTick()
 	}
 }
 
-#define Delay_1000MS  (1000)
+
 void init_app(){
-	startTimer2(Delay_1000MS);
-	cntNum = 0;
+	startTimer1(50);
+	startTimer2(1000);
 }
 
 void app_main(){
+	uns8 v;
+
+	if(timeout1){
+		startTimer1(50);
+
+		v = sensorCnt_0;
+		if(v != sensorCnt_1){
+			cntScore++;
+			if(cntScore > 99 ) cntScore=1;
+
+			sensorCnt_1 = v;
+
+			//SensorLED = !SensorLED;
+		}
+	}
+
 	if(timeout2){
-		startTimer2(Delay_1000MS);
+		startTimer2(1000);
 
-		cntNum = cntNum + 1;
-		if(cntNum > 99 ) cntNum = 0;
-
-		set10base(cntNum);
+		set10base(cntScore);
 		DisplayNumber(v10base[1],v10base[0]);
 	}
 }

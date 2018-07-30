@@ -43,12 +43,20 @@ void DisplayNumber(uns8 v10,uns8 v1){
 	uns8 v,i,j,n;
 	uns8 clear10,clear1;
 
-	if(v10 > 9 ) v10 = 9;
-	j = 4*v10;
-	for(i=1;i<5;i++){
-		v = numTable[j];
-		j = j+1;
-		setCmdChip(i,v);
+	if(v10 == 0){
+		setCmdChip(1,0);
+		setCmdChip(2,0);
+		setCmdChip(3,0);
+		setCmdChip(4,0);
+	}else{
+
+		if(v10 > 9 ) v10 = 9;
+		j = 4*v10;
+		for(i=1;i<5;i++){
+			v = numTable[j];
+			j = j+1;
+			setCmdChip(i,v);
+		}
 	}
 
 	if(v1 > 9 ) v1 = 9;

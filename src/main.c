@@ -17,6 +17,7 @@ RC7 RX   : debug tty
 #pragma bit SCK		@ PORTC.3
 #pragma bit SDO		@ PORTC.5
 #pragma bit TP		@ PORTC.1
+#pragma bit SensorLED		@ PORTC.0
 
 #pragma wideConstData p	
 
@@ -34,7 +35,39 @@ uns8 subClock;
 uns8 timer1, timer2L, timer2H;
 bit timeout1, timeout2;
 
-uns8 cntNum;
+uns8	sensorCnt_0;
+uns8	sensorCnt_1;
+uns8	cntScore;
+bit    	portb4_0;
+bit    	portb4_1;
+
+#include "int16CXX.h"
+#pragma origin 4
+interrupt int_server(void)
+{
+	int_save_registers    // W, STATUS (and PCLATH)
+  	uns8 valportb,sv_FSR;
+  	sv_FSR = FSR;
+
+	if(RBIF){
+		RBIF	= 0;
+		valportb = PORTB;
+
+		if( valportb & 0x10)
+			portb4_0 = 1;
+		else
+			portb4_0 = 0;
+
+		//RB4 falling
+		if( (portb4_1==1) && (portb4_0==0) )
+			sensorCnt_0++;
+
+		portb4_1 = portb4_0;
+
+	}
+	FSR = sv_FSR;
+   	int_restore_registers // W, STATUS (and PCLATH)
+}
 
 #include "out.h"
 #include "common.c"
@@ -94,8 +127,9 @@ void init_spi(void){
 
 	/* low active, CS */
 	/* RC2: CS = 1 */
+	/* RC0: SensorLED */
 	PORTC 	= 0b.0000.0100;
-	TRISC 	= 0b.1101.0001; /* RC2: output */
+	TRISC 	= 0b.1101.0000; /* RC2: output */
 }
 
 void main( void)
@@ -143,7 +177,22 @@ void main( void)
 	*/
 	OPTION	= 0x82;
 
-	TP = 1;
+	/*	RB4 IR0 Sensor	*/
+	PORTB 	= 0b.0000.0000;
+	ANSELB	= 0b.0000.0000; /* digital */
+	TRISB 	= 0b.0001.0000; /* intput */
+	IOCB	= 0b.0001.0000;
+
+	sensorCnt_0	= 0;
+	sensorCnt_1 = 0;
+	cntScore  	= 0;
+	TP 		  	= 1;
+	SensorLED 	= 0;
+
+	delayms(500);
+	RBIE	= 1;
+	GIE		= 1;
+	
 	while(1){
 		timerTick();
         /* Not more than 1 (2) millisec.
