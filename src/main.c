@@ -32,14 +32,15 @@ const char text[NText] = "Hello world!";
 /* key value */
 uns8 previousTMR0;
 uns8 subClock;
-uns8 timer1, timer2L, timer2H;
-bit timeout1, timeout2;
+uns8 timer1, timer2L, timer2H, timer3L, timer3H, timer4L, timer4H;
+bit timeout1, timeout2, timeout3, timeout4;
 
 uns8	sensorCnt_0;
 uns8	sensorCnt_1;
 uns8	cntScore;
 bit    	portb4_0;
 bit    	portb4_1;
+uns8	cntTimer;
 
 #include "int16CXX.h"
 #pragma origin 4
@@ -186,12 +187,18 @@ void main( void)
 	sensorCnt_0	= 0;
 	sensorCnt_1 = 0;
 	cntScore  	= 0;
+	cntTimer	= 1;
 	TP 		  	= 1;
 	SensorLED 	= 0;
 
 	delayms(500);
 	RBIE	= 1;
 	GIE		= 1;
+
+	startTimer1(150);
+	startTimer2(1000);
+	startTimer3(5000);
+	startTimer4(600);
 	
 	while(1){
 		timerTick();
